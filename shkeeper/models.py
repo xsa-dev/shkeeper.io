@@ -5,11 +5,18 @@ from decimal import Decimal
 import bcrypt
 from flask import current_app as app
 
-from shkeeper import db
-from shkeeper.modules.rates import RateSource
-from shkeeper.modules.classes.crypto import Crypto
-from .utils import format_decimal
-from .exceptions import NotRelatedToAnyInvoice
+try:
+    from shkeeper import db
+    from shkeeper.modules.rates import RateSource
+    from shkeeper.modules.classes.crypto import Crypto
+    from .utils import format_decimal
+    from .exceptions import NotRelatedToAnyInvoice
+except Exception as E:
+    from flask import Flask
+    from flask_sqlalchemy import SQLAlchemy
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///new.db'  # replace with your database URI
+    db = SQLAlchemy(app)
 
 
 class User(db.Model):
@@ -369,3 +376,6 @@ class PayoutTx(db.Model):
 class Setting(db.Model):
     name = db.Column(db.String, primary_key=True)
     value = db.Column(db.String)
+
+
+db.create_all()

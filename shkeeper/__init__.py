@@ -57,7 +57,8 @@ def create_app(test_config=None):
 
     # clear all session on app restart
     if sess_dir := app.config.get('SESSION_FILE_DIR'):
-        shutil.rmtree(sess_dir, ignore_errors=True)
+        # shutil.rmtree(sess_dir, ignore_errors=True)
+        pass
     from flask_session import Session
     Session(app)
 
@@ -82,6 +83,8 @@ def create_app(test_config=None):
 
     db.init_app(app)
     migrate.init_app(app, db)
+    db.create_all(app=app)
+
     with app.app_context():
         flask_migrate.upgrade()
 
